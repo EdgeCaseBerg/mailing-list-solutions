@@ -107,9 +107,9 @@ how many optional fields there are
 
 class CustomJsonFormat extends RootJsonFormat[Foo] {
 	def read(value: JsValue) = value.asJsObject.getFields("baz","bar") match {
-	      case Seq(JsNumber(x),JsString(status)) => Foo(x.toInt, status)
-	      case Seq(JsNumber(x)) => Foo(x.toInt,"default")
-	      case Seq(JsString(status)) => Foo(1, status)
+	      case Seq(JsNumber(baz),JsString(bar)) => Foo(baz.toInt, bar)
+	      case Seq(JsNumber(baz)) => Foo(baz.toInt,"default")
+	      case Seq(JsString(bar)) => Foo(1, bar)
 	      case Nil => Foo(1, "default")
 	      case _ => deserializationError("Issue deserializing object")
 	    }
