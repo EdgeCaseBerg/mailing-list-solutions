@@ -98,3 +98,40 @@ scala> x(baz)
 Foo(2,DefaultString)
 
 */
+
+/* 
+The alternative of course is to write your own Serializer/Deserializer
+Though this could easily become large and unwielding depending on 
+how many optional fields there are
+*/
+
+class CustomJsonFormat extends RootJsonFormat[Foo] {
+	def read(value: JsValue) = value.asJsObject.getFields("baz","bar") match {
+	      case Seq(JsNumber(x),JsString(status)) => Foo(x.toInt, status)
+	      case Seq(JsNumber(x)) => Foo(x.toInt,"default")
+	      case Seq(JsString(status)) => Foo(1, status)
+	      case Nil => Foo(1, "default")
+	      case _ => deserializationError("Issue deserializing object")
+	    }
+	def write(obj: Foo) = JsObject(
+		"baz" -> JsNumber(obj.baz), "bar" -> JsString(obj.bar)
+	)	
+}
+
+/* 
+scala> import example._
+import example._
+
+scala> import spray.json._
+import spray.json._
+
+scala> import example.CustomJsonFormat
+import example.CustomJsonFormat
+
+scala> implicit val format = new CustomJsonFormat
+format: example.CustomJsonFormat = example.CustomJsonFormat@38f3386e
+
+scala> val baz = """{"baz" : 2 }""".parseJson.convertTo[Foo]
+baz: example.Foo = Foo(2,default)
+
+*/
