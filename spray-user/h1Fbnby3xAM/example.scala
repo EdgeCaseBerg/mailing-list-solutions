@@ -3,6 +3,7 @@ package example
 import spray.json._
 
 /* 
+https://groups.google.com/forum/#!topic/spray-user/h1Fbnby3xAM
 I have a case class that is serialized/deserialized through spray-json. 
 Certain property needs to be set to some default value if not found in 
 the request, but I couldn't find a way to do so, except write my own 
